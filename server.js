@@ -10,6 +10,9 @@ require('dotenv').config();
 // Create our Express application
 var app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
 // Use environment defined port or 3000
 var port = process.env.PORT || 3000;
 

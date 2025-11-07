@@ -104,7 +104,7 @@ module.exports = function(router) {
                 assignedUserName: req.body.assignedUserName || 'unassigned'
             });
             
-            //personal note: both create and save work here and create should be favored just for performance in this case
+            //personal note: both create and save work here and create should be favored just for performance
             const savedTask = await newTask.save();
             
             res.status(201).json({
