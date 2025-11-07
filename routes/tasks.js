@@ -107,17 +107,19 @@ module.exports = function(router) {
             //personal note: both create and save work here and create should be favored just for performance
             const savedTask = await newTask.save();
             
+            // FIX: Update user's pendingTasks if task is assigned and not completed
+            if (savedTask.assignedUser && savedTask.assignedUser !== '' && !savedTask.completed) {
+                await User.findByIdAndUpdate(
+                    savedTask.assignedUser,
+                    { $addToSet: { pendingTasks: savedTask._id.toString() } }
+                );
+            }
+
             res.status(201).json({
                 message: "Task created successfully",
                 data: savedTask
             });
         } catch(err) {
-            if (err.code === 11000) {
-                return res.status(400).json({ 
-                    message: 'Task with that name already exists',
-                    data: {} 
-                });
-            }
             if (err.name === 'ValidationError') {
                 return res.status(400).json({ 
                     message: 'Validation failed',

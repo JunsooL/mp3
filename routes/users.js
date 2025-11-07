@@ -103,6 +103,15 @@ module.exports = function(router) {
             //save user to DB, sometimes add __v tag for iteration, again create() should work better here technically
             const savedUser = await newUser.save();
             
+            if (savedUser.pendingTasks && savedUser.pendingTasks.length > 0) {
+                for (let taskId of savedUser.pendingTasks) {
+                    await Task.findByIdAndUpdate(taskId, {
+                        assignedUser: savedUser._id.toString(),
+                        assignedUserName: savedUser.name
+                    });
+                }
+            }
+
             res.status(201).json({
                 message: "User created successfully",
                 data: savedUser
